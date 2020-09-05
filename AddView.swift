@@ -15,6 +15,7 @@ struct AddView: View {
     let expenseTypes = ["Personal","Business"]
     @ObservedObject var expenses: Expenses
     @Environment(\.presentationMode) var show
+    @State private var wrongAmountAlert = false
     
     var body: some View {
         NavigationView{
@@ -33,14 +34,24 @@ struct AddView: View {
             }
         .navigationBarTitle("Add Expense")
             .navigationBarItems(trailing: Button("Save") {
-                
+                if let actualAmount = Int(self.amount){
                     let item = ExpenseItem(name: self.expenseName,
                                            type: self.expenseTypeSelection,
-                                           amount: Int(self.amount) ?? 0)
+                                           amount: actualAmount)
                     self.expenses.items.append(item)
-                self.show.wrappedValue.dismiss()
+                    self.show.wrappedValue.dismiss()}
+                else{
+                    self.wrongAmountAlert.toggle()
+                }
                 
-            })
+                
+                })
+                .alert(isPresented: $wrongAmountAlert){
+                    Alert(title:Text("You can't enter that"), message:Text("Please enter a valid amount"))
+            }
+            
+                    
+            
         
         }
         

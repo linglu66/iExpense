@@ -55,17 +55,19 @@ struct ContentView: View {
 
                         Spacer()
                         Text("$\(item.amount)")
+                            .watermarked(item.amount)
+                            
                     }
                     
                 }.onDelete(perform: removeItems)
                 
             }
             .navigationBarTitle("iExpense")
-            .navigationBarItems(trailing:
+            .navigationBarItems(leading:EditButton(), trailing:
                 Button(action:{
                     self.showingAddExpense = true
-            }) {
-                Image(systemName: "plus")
+                }) {
+                    Image(systemName: "plus")
                 }
             )
             
@@ -77,7 +79,54 @@ struct ContentView: View {
     func removeItems(at offset:IndexSet){
         expenses.items.remove(atOffsets: offset)
     }
+    
+    
 }
+struct amountFormat_sm: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.white)
+            .padding()
+            .background(Color.blue)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+struct amountFormat_med: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.white)
+            .padding()
+            .background(Color.yellow)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+struct amountFormat_lrg: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.white)
+//            .frame(width:80)
+            .padding()
+            .background(Color.red)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+extension View {
+    func watermarked(_ amount: Int) -> some View {
+        
+        if amount <= 10 {
+            return AnyView(self.modifier(amountFormat_sm()))
+        }else if amount < 100{
+            return AnyView(self.modifier(amountFormat_med()))
+        }else{
+            return AnyView(self.modifier(amountFormat_lrg()))
+        }
+        
+//        self.modifier(amountFormat_sm())
+        
+    }
+}
+
 
 
 struct ContentView_Previews: PreviewProvider {
